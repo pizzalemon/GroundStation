@@ -45,7 +45,7 @@ class DummyUGVHandler:
     def update(self):
         try:
             self.current_state = random.choice(self.states)
-            self.next_objective = self.states[(self.states.index(self.current_state)) + 1]
+            self.next_objective = self.states[((self.states.index(self.current_state)) + 1) % len(self.states)]
             self.yaw = random.randint(0, 360)
             self.ground_speed = random.random() * 30 + 45
             self.connection = [random.random(), random.random(), random.random() * 100]

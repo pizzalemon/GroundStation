@@ -109,6 +109,7 @@ class GroundStation:
         self.interop.login()
         time.sleep(1)
         self.uav.connect()
+        self.ugv.connect()
         self.image.initialize()
         print("╚═══ INITIALIZED HANDLERS\n")
         self.logger.info("INITIALIZED HANDLERS\n")
@@ -126,7 +127,14 @@ class GroundStation:
         while True:
             run = self.uav.update()
             if run != {}:
-                self.logger.debug("[Plane] %s", run)
+                self.logger.debug("[UAV] %s", run)
+            time.sleep(0.1)
+
+    def ugv_thread(self):
+        while True:
+            run = self.ugv.update()
+            if run != {}:
+                self.logger.debug("[UGV] %s", run)
             time.sleep(0.1)
 
     def image_thread(self):
@@ -150,6 +158,10 @@ class GroundStation:
         self.plane_thread.name = "UAVThread"
         self.plane_thread.daemon = True
 
+        self.rover_thread = Thread(target=self.ugv_thread)
+        self.rover_thread.name = "UGVThread"
+        self.rover_thread.daemon = True
+
         self.retreive_image_thread = Thread(target=self.image_thread)
         self.retreive_image_thread.name = "ImageThread"
         self.retreive_image_thread.daemon = True
@@ -161,6 +173,10 @@ class GroundStation:
         self.plane_thread.start()
         print("╠ STARTED UAV THREAD")
         self.logger.info("STARTED UAV THREAD")
+
+        self.rover_thread.start()
+        print("╠ STARTED UGV THREAD")
+        self.logger.info("STARTED UGV THREAD")
 
         self.retreive_image_thread.start()
         print("╠ STARTED IMAGE THREAD")
