@@ -283,27 +283,27 @@ def map_submit():
 
 @app.route("/uav/connect", methods=["POST"])
 def connect():
-    return gs.call("m_connect")
+    return gs.call("uav_connect")
 
 
 @app.route("/uav/update", methods=["POST"])
 def update():
-    return gs.call("m_update")
+    return gs.call("uav_update")
 
 
 @app.route("/uav/quick")
 def quick():
-    return gs.call("m_quick")
+    return gs.call("uav_quick")
 
 
 @app.route("/uav/stats")
 def stats():
-    return gs.call("m_stats")
+    return gs.call("uav_stats")
 
 
 @app.route("/uav/mode/get")
 def get_mode():
-    return gs.call("m_getflightmode")
+    return gs.call("uav_getflightmode")
 
 
 @app.route("/uav/mode/set", methods=["POST"])
@@ -311,22 +311,22 @@ def set_mode():
     f = request.json
     if not all(field in f for field in ["mode"]):
         raise InvalidRequestError("Missing required fields in request")
-    return gs.call("m_setflightmode", f.get("mode"))
+    return gs.call("uav_setflightmode", f.get("mode"))
 
 
 @app.route("/uav/params/get/<key>")
 def get_param(key):
-    return gs.call("m_getparam", key)
+    return gs.call("uav_getparam", key)
 
 
 @app.route("/uav/params/getall")
 def get_params():
-    return gs.call("m_getparams")
+    return gs.call("uav_getparams")
 
 
 @app.route("/uav/params/set/<key>/<value>", methods=["POST"])
 def set_param(key, value):
-    return gs.call("m_setparam", key, value)
+    return gs.call("uav_setparam", key, value)
 
 
 @app.route("/uav/params/setmultiple", methods=["POST"])
@@ -334,22 +334,22 @@ def set_params():
     f = request.json
     if not all(field in f for field in ["params"]):
         raise InvalidRequestError("Missing required fields in request")
-    return gs.call("m_setparams", f.get("params"))  # {"param": "newvalue"}
+    return gs.call("uav_setparams", f.get("params"))  # {"param": "newvalue"}
 
 
 @app.route("/uav/params/save", methods=["POST"])
 def save_params():
-    return gs.call("m_saveparams")
+    return gs.call("uav_saveparams")
 
 
 @app.route("/uav/params/load", methods=["POST"])
 def load_params():
-    return gs.call("m_loadparams")
+    return gs.call("uav_loadparams")
 
 
 @app.route("/uav/commands/get")
 def get_commands():
-    return gs.call("m_getcommands")
+    return gs.call("uav_getcommands")
 
 
 @app.route("/uav/commands/insert", methods=["POST"])
@@ -357,7 +357,7 @@ def insert_command():
     f = request.json
     if not all(field in f for field in ["command", "lat", "lon", "alt"]):
         raise InvalidRequestError("Missing required fields in request")
-    return gs.call("m_insertcommand",
+    return gs.call("uav_insertcommand",
                    f.get("command"),
                    f.get("lat"),
                    f.get("lon"),
@@ -367,22 +367,22 @@ def insert_command():
 
 @app.route("/uav/commands/clear", methods=["POST"])
 def clear_commands():
-    return gs.call("m_clearcommands")
+    return gs.call("uav_clearcommands")
 
 
 @app.route("/uav/getarmed")
 def armed():
-    return gs.call("m_getarmed")
+    return gs.call("uav_getarmed")
 
 
 @app.route("/uav/arm", methods=["POST"])
 def arm():
-    return gs.call("m_arm")
+    return gs.call("uav_arm")
 
 
 @app.route("/uav/disarm", methods=["POST"])
 def disarm():
-    return gs.call("m_disarm")
+    return gs.call("uav_disarm")
 
 
 if __name__ == "__main__":
