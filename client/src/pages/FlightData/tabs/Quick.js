@@ -100,8 +100,8 @@ const Quick = () => {
 			<Column style={{ marginBottom: "1rem", gap: "0.5rem" }}>
 				<Row style={{ gap: "1rem" }}>
 					<Row>
+						<SvgImage />
 						<Box label="Current State" content={"Ground Travel"} />
-						<Box label="Next Objective" content={"Reach Destination"} />
 						<Box label="To Destination" content={waypoint[1].toFixed(2) + " ft"} />
 					</Row>
 				</Row>
