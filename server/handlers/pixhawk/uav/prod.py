@@ -1,11 +1,12 @@
 import json
 import logging
 import math
+from typing import Optional
 
-from dronekit import connect, Command, VehicleMode
+from dronekit import connect, Command, VehicleMode, Vehicle
 from pymavlink import mavutil as uavutil
 
-from errors import GeneralError, InvalidRequestError
+from errors import GeneralError, InvalidRequestError, InvalidStateError
 
 SERIAL_PORT = "/dev/ttyACM0"
 BAUDRATE = 115200
@@ -26,7 +27,7 @@ class UAVHandler:
         self.port = self.config["uav"]["telemetry"]["port"]
         self.serial = self.config["uav"]["telemetry"]["serial"]
         self.update_thread = None
-        self.vehicle = None
+        self.vehicle: Optional[Vehicle] = None
         self.altitude = self.orientation = self.ground_speed = self.air_speed = self.dist_to_wp = \
             self.battery = self.lat = self.lon = self.connection = self.waypoint = self.armed = \
             self.mode = self.waypoints = self.waypoint_index = self.temperature = self.params = \
@@ -110,7 +111,8 @@ class UAVHandler:
             "quick": self.quick()["result"],
             "mode": self.mode.name,
             "commands": [cmd.to_dict() for cmd in self.vehicle.commands],
-            "armed": self.armed
+            "armed": self.armed,
+            "status": self.vehicle.system_status.state
         }}
 
     def set_flight_mode(self, flightmode):
@@ -135,7 +137,8 @@ class UAVHandler:
 
     def get_params(self):
         try:
-            return {"result": self.vehicle.parameters.items()}
+            return {"result": dict((keys, values) for keys, values in tuple(
+                self.vehicle.parameters.items()))}
         except Exception as e:
             raise GeneralError(str(e)) from e
 
@@ -165,7 +168,7 @@ class UAVHandler:
     def save_params(self):
         try:
             with open("handlers/pixhawk/uav/uav_params.json", "w", encoding="utf-8") as file:
-                json.dump(self.vehicle.paramreters, file)
+                json.dump(self.vehicle.parameters, file)
             return {}
         except Exception as e:
             raise GeneralError(str(e)) from e
@@ -180,25 +183,42 @@ class UAVHandler:
 
     def get_commands(self):
         try:
-            commands = self.vehicle.commands
-            commands.download()
-            return {"result": [cmd.to_dict() for cmd in commands]}
+            cmds = self.vehicle.commands
+            cmds.download()
+            cmds.wait_ready()
+            return {"result": [cmd.to_dict() for cmd in cmds]}
         except Exception as e:
             raise GeneralError(str(e)) from e
 
     def insert_command(self, command, lat, lon, alt):
         if command not in COMMANDS:
             raise InvalidRequestError("Invalid Command Name")
+        if command in ("TAKEOFF", "LAND"):
+            self.clear_mission()
         try:
             new_cmd = Command(0, 0, 0, uavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
                               COMMANDS[command], 0, 0, 0, 0, 0, 0, lat, lon, alt)
             cmds = self.vehicle.commands
             cmds.download()
+            cmds.wait_ready()
             cmds.add(new_cmd)
             cmds.upload()
             return {}
         except Exception as e:
             raise GeneralError(str(e)) from e
+
+    # TODO: add below 3 commands to UAV dummy, UGV all
+    def jump_to_command(self, command: int):
+        try:
+            self.vehicle.commands.next = command
+        except Exception as e:
+            raise GeneralError(str(e)) from e
+
+    def load_mission(self):
+        pass
+
+    def save_mission(self):
+        pass
 
     def clear_mission(self):
         try:
@@ -216,8 +236,13 @@ class UAVHandler:
 
     def arm(self):
         try:
+            if not self.vehicle.is_armable:
+                raise InvalidStateError("Vehicle is not armable")
             self.vehicle.armed = True  # Motors can be started
+            print(self.vehicle.armed)
             return {}
+        except InvalidStateError as e:
+            raise InvalidStateError(str(e)) from e
         except Exception as e:
             raise GeneralError(str(e)) from e
 

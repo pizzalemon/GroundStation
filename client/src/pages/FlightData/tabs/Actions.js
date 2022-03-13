@@ -3,14 +3,22 @@ import { Button, Box, Label, Slider, Dropdown } from "components/UIElements"
 import { Row, Column } from "components/Containers"
 import regexParse from "regex-parser"
 import { red } from "../../../theme/Colors"
+import { httpget, httppost } from "../../../backend"
 
 const actions = {
 	waypoint: [0, 1, 2, 3, 4]
 }
 
 const Actions = () => {
+	const [Aarmed, setAarmed] = useState("")
 
-	const updateData = () => {}
+	const updateData = () => {
+		httpget("/uav/stats")
+			.then(data => {
+				console.log(data)
+				setAarmed(data.data.result.armed)
+			})
+	}
 
 	useEffect(() => {
 		const tick = setInterval(() => {
@@ -37,12 +45,16 @@ const Actions = () => {
 
 			<Column style={{ marginBottom: "1rem" }}>
 				<Row>
-					<Button>AUTO</Button>
-					<Button>MANUAL</Button>
-					<Button>STABILIZE</Button>
-					<Button>LOITER</Button>
-					<Button>CIRCLE</Button>
-					<Button>RTL</Button>
+					<Button onClick={() => httppost("/uav/mode/set", {"mode": "MANUAL"})}>MANUAL</Button>
+					<Button onClick={() => httppost("/uav/mode/set", {"mode": "AUTO"})}>AUTO</Button>
+					<Button onClick={() => httppost("/uav/mode/set", {"mode": "TAKEOFF"})}>TAKEOFF</Button>
+					<Button onClick={() => httppost("/uav/commands/insert", {"command": "LAND", "lat": 38.14469, "lon": -76.42799, alt: 6.6})}>LAND</Button>
+				</Row>
+				<Row>
+					<Button onClick={() => httppost("/uav/mode/set", {"mode": "LOITER"})}>LOITER</Button>
+					<Button onClick={() => httppost("/uav/mode/set", {"mode": "CIRCLE"})}>CIRCLE</Button>
+					<Button onClick={() => httppost("/uav/mode/set", {"mode": "STABILIZE"})}>STABILIZE</Button>
+					<Button onClick={() => httppost("/uav/mode/set", {"mode": "RTL"})}>RTL</Button>
 				</Row>
 			</Column>
 
@@ -52,24 +64,42 @@ const Actions = () => {
 				</Row>
 			</Column>
 			<Column style={{ marginBottom: "1rem" }}>
-				<Row style={{ gap: "1rem" }}>
+				<Row>
 					<Row>
 						<Box
 							ref={inputBox}
+							content=""
+							onChange={v => {
+								let value = v
+								let newvalue = ""
+								if (value.length > 3) {
+									value = v.substring(0, 3)
+								}
+								console.log(value)
+								if (value.length >= 1) {
+									for (let i = 0; i < value.length; i++) {
+										let ascii = value.charCodeAt(i)
+										if (ascii >= 48 && ascii <= 57) {
+											newvalue += value[i]
+										}
+									}
+								}
+								return newvalue
+							}}
 							onKeyDown={e => {
 								if (e.nativeEvent.key === "Enter") e.preventDefault()
 								e.stopPropagation()
 							}}
 							placeholder="#"
 							style={{ textAlign: "center" }}
-							line="360%"
+							line="430%"
 							editable
 						/>
-						<Button>GO!</Button>
+						<Button onClick={() => httppost("/uav/commands/jump", {"command": inputBox})}>GO!</Button>
 					</Row>
-					<Button>WAYPOINTS (#1)</Button>
-					<Button>ODLC (#20)</Button>
-					<Button>MAP (#50)</Button>
+					<Button onClick={() => httppost("/uav/commands/jump", {"command": 1})}>WAYPOINTS (#1)</Button>
+					<Button onClick={() => httppost("/uav/commands/jump", {"command": 20})}>ODLC (#20)</Button>
+					<Button onClick={() => httppost("/uav/commands/jump", {"command": 50})}>MAP (#50)</Button>
 				</Row>
 			</Column>
 
@@ -95,7 +125,7 @@ const Actions = () => {
 				<Row>
 					<Button color={red}>SET HOME ALT</Button>
 					<Button color={red}>CALIBRATION</Button>
-					<Button color={red}>ARM/DISARM</Button>
+					<Button color={red} onClick={() => httppost((Aarmed ? "/uav/disarm" : "/uav/arm"), {"command": inputBox.value})}>{Aarmed ? "DISARM" : "ARM"}</Button>
 					<Button color={red}>RESTART</Button>
 				</Row>
 			</Column>

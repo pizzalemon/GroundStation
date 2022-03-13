@@ -12,7 +12,8 @@ const Quick = () => {
 	const [Aorientation, setAorientation] = useState({ "yaw": 0, "pitch": 0, "roll": 0 })
 	const [AlatLong, setAlatLong] = useState({ "lat": 0, "lon": 0 })
 	const [Amode, setAmode] = useState("")
-	const [Aarmed, setAarmed] = useState(false)
+	const [Aarmed, setAarmed] = useState("")
+	const [Astatus, setAstatus] = useState("")
 	const [AgroundSpeed, setAgroundSpeed] = useState(0)
 	const [Aairspeed, setAairspeed] = useState(0)
 	const [Abattery, setAbattery] = useState(16)
@@ -38,6 +39,7 @@ const Quick = () => {
 				setAlatLong({"lat": data.result.quick.lat, "lon": data.result.quick.lon})
 				setAmode(data.result.mode)
 				setAarmed(data.result.armed)
+				setAstatus(data.result.status)
 				setAgroundSpeed(data.result.quick.ground_speed)
 				setAairspeed(data.result.quick.air_speed)
 				setAbattery(data.result.quick.battery)
@@ -74,7 +76,7 @@ const Quick = () => {
 			}}
 		>
 			<StyledDiv>
-				<Label className="paragraph" style={{ "font-size": "2em", color: "black" }}>Plane</Label>
+				<Label className="paragraph" style={{ "font-size": "2em", color: "black" }}>Plane {Aarmed ? "(ARMED)" : ""}</Label>
 				<UAV />
 			</StyledDiv>
 			<Column style={{ marginBottom: "1rem", gap: "0.5rem" }}>
@@ -98,7 +100,7 @@ const Quick = () => {
 					<Row>
 						<Box label="Ground Speed" content={AgroundSpeed.toFixed(2) + " mph"} />
 						<Box label="Airspeed" content={Aairspeed.toFixed(2) + " mph"} />
-						<Box label="Armed" content={Aarmed ? "Yes ✅" : "No ❌"} />
+						<Box label="Status" content={Astatus} />
 						<Box label="Mode" content={Amode} />
 					</Row>
 				</Row>
