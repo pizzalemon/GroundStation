@@ -5,6 +5,7 @@ import { Row, Column } from "components/Containers"
 import styled from "styled-components"
 import { ReactComponent as RawUGV } from "icons/ugv.svg"
 import { ReactComponent as RawUAV } from "icons/plane.svg"
+import { httpget } from "../../../backend"
 
 const Quick = () => {
 	const [Aaltitude, setAaltitude] = useState(0)
@@ -17,7 +18,6 @@ const Quick = () => {
 	const [AgroundSpeed, setAgroundSpeed] = useState(0)
 	const [Aairspeed, setAairspeed] = useState(0)
 	const [Abattery, setAbattery] = useState(16)
-	// const [Atemperature, setAtemperature] = useState([25, 25, 25, 25])
 	const [Awaypoint, setAwaypoint] = useState([1, 0])
 	const [Aconnection, setAconnection] = useState([95, 0, 95])
 
@@ -30,8 +30,8 @@ const Quick = () => {
 	const [Gconnection, setGconnection] = useState([95, 0, 95])
 
 	const updateData = () => {
-		fetch("http://localhost:5000/uav/stats")
-			.then(response => response.json())
+		httpget("/uav/stats")
+			.then(response => response.data)
 			.then(data => {
 				setAaltitude(data.result.quick.altitude)
 				setAthrottle(data.result.quick.throttle)
@@ -47,8 +47,8 @@ const Quick = () => {
 				setAwaypoint(data.result.quick.waypoint)
 				setAconnection(data.result.quick.connection)
 			})
-		fetch("http://localhost:5000/ugv/stats")
-			.then(response => response.json())
+		httpget("/ugv/stats")
+			.then(response => response.data)
 			.then(data => {
 				setGcurrent(data.result.quick.states[0])
 				setGnext(data.result.quick.states[1])
@@ -76,7 +76,7 @@ const Quick = () => {
 			}}
 		>
 			<StyledDiv>
-				<Label className="paragraph" style={{ "font-size": "2em", color: "black" }}>Plane {Aarmed ? "(ARMED)" : ""}</Label>
+				<Label className="paragraph" style={{ "font-size": "2em", color: "black" }}>Plane ({Aarmed})</Label>
 				<UAV />
 			</StyledDiv>
 			<Column style={{ marginBottom: "1rem", gap: "0.5rem" }}>
