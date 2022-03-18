@@ -291,11 +291,11 @@ class UAVHandler:
         (https://qgroundcontrol.org/mavlink/waypoint_protocol#waypoint_file_format).
         """
         missionlist = download_mission(self.vehicle)
-        output = 'QGC WPL 110\n'
+        output = "QGC WPL 110\n"
         for cmd in missionlist:
-            commandline = f"{cmd.seq}\t{cmd.current}\t{cmd.frame}\t{cmd.command}\t{cmd.param1}\t" \
-                          f"{cmd.param2}\t{cmd.param3}\t{cmd.param4}\t{cmd.x}\t{cmd.y}\t" \
-                          f"{cmd.z}\t{cmd.autocontinue}\n"
+            commandline = f"{cmd.seq}\t{cmd.current}\t{cmd.frame}\t{cmd.command}\t" \
+                          f"{cmd.param1}\t{cmd.param2}\t{cmd.param3}\t{cmd.param4}\t{cmd.x}\t" \
+                          f"{cmd.y}\t{cmd.z}\t{cmd.autocontinue}\n"
             output += commandline
         with open("handlers/pixhawk/uav/uav_mission.txt", "w", encoding="utf-8") as file_:
             file_.write(output)
@@ -315,9 +315,9 @@ class UAVHandler:
             if self.vehicle.armed:
                 return {"result": "ARMED"}
             elif self.vehicle.is_armable:
-                return {"result": "DISARMED, ARMABLE"}
+                return {"result": "DISARMED (ARMABLE)"}
             else:
-                return {"result": "DISARMED"}
+                return {"result": "DISARMED (NOT ARMABLE)"}
         except Exception as e:
             raise GeneralError(str(e)) from e
 

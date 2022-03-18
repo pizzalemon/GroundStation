@@ -50,20 +50,6 @@ def readmission(filename):
     return missionlist
 
 
-def download_mission(vehicle):
-    """
-    Downloads the current mission and returns it in a list.
-    It is used in save_mission() to get the file information to save.
-    """
-    missionlist = []
-    cmds = vehicle.commands
-    cmds.download()
-    cmds.wait_ready()
-    for cmd in cmds:
-        missionlist.append(cmd)
-    return missionlist
-
-
 class DummyUAVHandler:
     sim_speed = 0.000016
 
@@ -258,11 +244,11 @@ class DummyUAVHandler:
         (https://qgroundcontrol.org/mavlink/waypoint_protocol#waypoint_file_format).
         """
         try:
-            output = 'QGC WPL 110\n'
+            output = "QGC WPL 110\n"
             for cmd in self.commands:
-                commandline = f"{cmd.seq}\t{cmd.current}\t{cmd.frame}\t{cmd.command}\t{cmd.param1}\t" \
-                              f"{cmd.param2}\t{cmd.param3}\t{cmd.param4}\t{cmd.x}\t{cmd.y}\t" \
-                              f"{cmd.z}\t{cmd.autocontinue}\n"
+                commandline = f"{cmd.seq}\t{cmd.current}\t{cmd.frame}\t{cmd.command}\t" \
+                              f"{cmd.param1}\t{cmd.param2}\t{cmd.param3}\t{cmd.param4}\t{cmd.x}\t" \
+                              f"{cmd.y}\t{cmd.z}\t{cmd.autocontinue}\n"
                 output += commandline
             with open("handlers/pixhawk/uav/uav_mission.txt", "w", encoding="utf-8") as file_:
                 file_.write(output)
@@ -276,7 +262,7 @@ class DummyUAVHandler:
     # Armed
 
     def get_armed(self):
-        return {"result": self.armed}
+        return {"result": "ARMED" if self.armed else "DISARMED (ARMABLE)"}
 
     def arm(self):
         self.armed = True  # Motors can be started
