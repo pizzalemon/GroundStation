@@ -69,7 +69,7 @@ const Actions = () => {
 		return () => clearInterval(tick)
 	})
 
-	const inputBox = useRef(null)
+	const [waypointNum, setWaypointNum] = useState(1)
 
 	return (
 		<div
@@ -119,10 +119,10 @@ const Actions = () => {
 			</Column>
 			<Column style={{ marginBottom: "1rem" }}>
 				<Row>
-					<Button color={darkred}>SET HOME</Button>
-					<Button color={darkred}>CALIBRATION</Button>
-					<Button color={darkred} onClick={() => httppost((Aarmed === "ARMED" ? "/uav/disarm" : "/uav/arm"), {"command": inputBox.value})}>{Aarmed === "ARMED" ? "DISARM" : "ARM"}</Button>
-					<Button color={darkred}>RESTART</Button>
+					<Button color={darkred}>SET HOME?</Button>
+					<Button color={darkred}>CALIBRATION?</Button>
+					<Button color={darkred} onClick={() => httppost(Aarmed === "ARMED" ? "/uav/disarm" : "/uav/arm")}>{Aarmed === "ARMED" ? "DISARM" : "ARM"}</Button>
+					<Button color={darkred}>RESTART?</Button>
 				</Row>
 			</Column>
 			<Column>
@@ -134,7 +134,6 @@ const Actions = () => {
 				<Row>
 					<Row>
 						<Box
-							ref={inputBox}
 							content=""
 							onChange={v => {
 								let value = v
@@ -151,6 +150,7 @@ const Actions = () => {
 										}
 									}
 								}
+								setWaypointNum(parseInt(newvalue))
 								return newvalue
 							}}
 							onKeyDown={e => {
@@ -162,11 +162,11 @@ const Actions = () => {
 							line="330%"
 							editable
 						/>
-						<Button onClick={() => httppost("/uav/commands/jump", {"command": inputBox})}>GO!</Button>
+						<Button onClick={() => httppost("/uav/commands/jump", {"command": waypointNum})}>GO!</Button>
 					</Row>
-					<Button onClick={() => httppost("/uav/commands/jump", {"command": 1})}>WAYPOINTS (#1)</Button>
-					<Button onClick={() => httppost("/uav/commands/jump", {"command": 20})}>ODLC (#20)</Button>
-					<Button onClick={() => httppost("/uav/commands/jump", {"command": 50})}>MAP (#50)</Button>
+					<Button onClick={() => httppost("/uav/commands/jump", {"command": 1})}>WAYPOINTS (#1?)</Button>
+					<Button onClick={() => httppost("/uav/commands/jump", {"command": 20})}>ODLC (#20?)</Button>
+					<Button onClick={() => httppost("/uav/commands/jump", {"command": 50})}>MAP (#50?)</Button>
 				</Row>
 			</Column>
 
@@ -177,10 +177,11 @@ const Actions = () => {
 			</Column>
 			<Column style={{ marginBottom: "1rem" }}>
 				<Row>
-					<Button>LOAD</Button>
-					<Button>SAVE</Button>
-					<Button>CLEAR</Button>
-					<Button color={darkred}>ABORT LANDING</Button>
+					<Button onClick={() => window.open("http://localhost:5000/uav/commands/view")}>VIEW</Button>
+					<Button onClick={() => httppost("/uav/commands/load")}>LOAD</Button>
+					<Button onClick={() => httppost("/uav/commands/save")}>SAVE</Button>
+					<Button onClick={() => httppost("/uav/commands/clear")}>CLEAR</Button>
+					<Button color={darkred}>ABORT LAND?</Button>
 				</Row>
 			</Column>
 
