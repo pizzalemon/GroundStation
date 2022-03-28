@@ -137,7 +137,7 @@ class UAVHandler:
             self.dist_to_wp = math.sqrt(x_dist_ft ** 2 + y_dist_ft ** 2)  # Distance in miles
             if dist <= 0.0001:  # Arbitrary value
                 self.waypoint_index = (self.waypoint_index + 1) % len(self.waypoints)
-            self.waypoint = [self.waypoint_index, self.dist_to_wp]
+            self.waypoint = [self.waypoint_index + 1, self.dist_to_wp]
             self.mode = self.vehicle.mode
             self.armed = self.vehicle.armed
             return {}
@@ -335,7 +335,6 @@ class UAVHandler:
             if not self.vehicle.is_armable:
                 raise InvalidStateError("Vehicle is not armable")
             self.vehicle.armed = True  # Motors can be started
-            print(self.vehicle.armed)
             return {}
         except InvalidStateError as e:
             raise InvalidStateError(str(e)) from e
