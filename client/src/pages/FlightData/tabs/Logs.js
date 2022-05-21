@@ -4,6 +4,7 @@ import { Button, CheckboxList } from "components/UIElements"
 import { Column, Row } from "components/Containers"
 import { httpget } from "backend"
 import { dark, darkest, darkdark, red } from "theme/Colors"
+import { useInterval } from "../../../util"
 
 const colors = {
 	DEBUG: darkdark,
@@ -31,12 +32,12 @@ const Logs = () => {
 		scrollDiv.current.scrollIntoView()
 	}
 
-	const updateData = () => {
+	useInterval(1000, () => {
 		httpget("/logs", (response) => {
 			setLogs(response.data.result)
 			checkScrolling(true)
 		})
-	}
+	})
 
 	const checkScrolling = (shouldScroll) => {
 		let scrollTop = container.current.scrollTop
@@ -63,12 +64,7 @@ const Logs = () => {
 			scrollToBottom()
 		}
 
-		const tick = setInterval(() => {
-			updateData()
-		}, 1000)
-
 		return () => {
-			clearInterval(tick)
 			window.sessionStorage.setItem("logs", logsRef.length > 0 ? "" : logsRef.current.reduce((p, n) => {
 				return p + "|||" + n
 			}))
