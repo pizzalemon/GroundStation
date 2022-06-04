@@ -142,9 +142,9 @@ const StyledLog = ({ content }) => {
 }
 
 const ScrollButton = styled(Button)`
-	margin: auto 0 0 auto;
+	margin: 0.25em 0 0 2.5em;
 	width: 75%;
-	height: 1.5em;
+	height: 2em;
 `
 
 const StyledContainer = styled.div`

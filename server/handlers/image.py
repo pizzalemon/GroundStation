@@ -105,7 +105,6 @@ class ImageHandler:
                         "orange",
                     ]
                 ),
-                log=False,
             )
             return True
         return False
