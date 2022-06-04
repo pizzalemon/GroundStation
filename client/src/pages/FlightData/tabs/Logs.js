@@ -19,6 +19,7 @@ const Logs = () => {
 	const [logs, setLogs] = useState([])
 	const [autoScroll, setAutoScroll] = useState(true)
 	const [filters, setFilters] = useState(["[INFO     ]", "[IMPORTANT]", "[WARNING  ]", "[ERROR    ]", "[CRITICAL ]"])
+	const [types, setTypes] = useState(["(groundstation)", "(autopilot)"])
 	const autoScrollRef = useRef()
 	const scrollDiv = useRef()
 	const container = useRef()
@@ -105,9 +106,10 @@ const Logs = () => {
 						<CheckboxList.Option checked={filters.includes("[ERROR    ]")} value="[ERROR    ]" color={colors.ERROR}>Error</CheckboxList.Option>
 						<CheckboxList.Option checked={filters.includes("[CRITICAL ]")} value="[CRITICAL ]" color={colors.CRITICAL}>Critical</CheckboxList.Option>
 					</Column>
-					<div>
+					<Column gap="0em">
+						<ScrollButton href="http://localhost:5000/logs" newTab={true}>Open Log File</ScrollButton>
 						<ScrollButton onChange={() => { scrollDiv.current.scrollIntoView(); setAutoScroll(true) }}>Scroll To End</ScrollButton>
-					</div>
+					</Column>
 				</Row>
 			</CheckboxList>
 			<StyledLogsContainer ref={container}>
@@ -140,9 +142,9 @@ const StyledLog = ({ content }) => {
 }
 
 const ScrollButton = styled(Button)`
-	margin: 2em 0 0 auto;
+	margin: auto 0 0 auto;
 	width: 75%;
-	height: 2.5em;
+	height: 1.5em;
 `
 
 const StyledContainer = styled.div`
