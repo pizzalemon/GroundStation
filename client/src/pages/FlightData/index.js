@@ -25,7 +25,9 @@ TODO: Display list highlighting (and vice versa)
 */
 
 const FlightData = () => {
-	const [mode, setMode] = useState("disabled")
+	const [mode, setMode] = useState("waypoint")
+	const [placementMode, setPlacementMode] = useState("push")
+	const [previousMode, setPreviousMode] = useState("disabled")
 	const [saved, setSaved] = useState(true)
 	const [defaultAlt, setDefaultAlt] = useState(100)
 
@@ -85,6 +87,10 @@ const FlightData = () => {
 		offAxis: "Off Axis ODLC",
 		searchGrid: "ODLC Search Grid",
 		path: "Mission Path",
+		unlim: "Unlimited Loiter",
+		turn: "Turn Loiter",
+		time: "Time Loiter",
+		jump: "Jump",
 		uav: "UAV",
 		home: "Home Waypoint"
 	}
@@ -118,9 +124,13 @@ const FlightData = () => {
 					getters={getters}
 					setters={setters}
 					mode={mode}
+					setMode={setMode}
+					previousMode={previousMode}
+					setPreviousMode={setPreviousMode}
+					placementMode={placementMode}
+					setPlacementMode={setPlacementMode}
 					saved={saved}
 					setSaved={setSaved}
-					setMode={setMode}
 					tabName={"Map"}
 				/>
 				<Servo />
@@ -132,6 +142,10 @@ const FlightData = () => {
 				setters={setters}
 				mode={mode}
 				saved={saved}
+				previousMode={previousMode}
+				setPreviousMode={setPreviousMode}
+				placementMode={placementMode}
+				setPlacementMode={setPlacementMode}
 				setSaved={setSaved}
 				setMode={setMode}
 			/>
