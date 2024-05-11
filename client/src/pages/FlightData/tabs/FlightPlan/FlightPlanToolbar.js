@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef, useContext } from "react"
-import { Box, Button, Dropdown, RadioList, Label } from "components/UIElements"
-import { light,dark,darker,red } from "theme/Colors"
+import React, { useEffect, useState, useRef } from "react"
+import { Box, Button, Dropdown } from "components/UIElements"
+import { dark, red } from "theme/Colors"
 import { httppost } from "backend"
 
 import { Row, Column, Modal, ModalHeader, ModalBody } from "components/Containers"
@@ -59,16 +59,17 @@ const FlightPlanToolbar = props => {
         props.setters.pathSave(path)
         props.setters.pathSaved(true)
 
-        httppost("/uav/commands/generate", {"waypoints": path.map(waypoint => ({
-                ...waypoint,
-                lat: waypoint.lat ?? 0.0,  // if jump
-                lon: waypoint.lng ?? 0.0,  // if jump
-                alt: (waypoint.alt ?? 0.0) / 3.281,  // altitude to m
-                p3: (waypoint.p3 ?? 0.0) / 3.281,  // loiter radius to m
-        })) })
+        httppost("/uav/commands/generate", {
+            "waypoints": path.map(waypoint => ({
+                    ...waypoint,
+                    lat: waypoint.lat ?? 0.0,  // if jump
+                    lon: waypoint.lng ?? 0.0,  // if jump
+                    alt: (waypoint.alt ?? 0.0) / 3.281,  // altitude to m
+                    p3: (waypoint.p3 ?? 0.0) / 3.281,  // loiter radius to m
+                })
+            )
+        })
     }
-
-
 
     useEffect(() => {
         if (props.getters.placementMode === "distance") {
@@ -179,13 +180,12 @@ const FlightPlanToolbar = props => {
             setTurns("")
             setTime("")
             moveToFirstInput()
-
         }
     }
 
     const moveToFirstInput = () => {
         input1Ref.current.focus();
-      };
+    };
 
     return (
         <div style={{ marginLeft: 10 }}>
@@ -202,7 +202,6 @@ const FlightPlanToolbar = props => {
                     savePath(path)
                 }}>Set as default ({props.getters.defaultAlt} ft)</Button></ModalBody>
             </Modal>
-
 
             <Column style={{ marginBottom: "1rem", gap: "1.5rem" }}>
                 <Row columns="minmax(0, 3fr) minmax(0, 5fr) minmax(0, 4fr)">
@@ -413,7 +412,6 @@ const FlightPlanToolbar = props => {
 }
 
 const PlacePointInputBox = ({ props, refProp, fieldSpecs, placePt, greyOutPlacePoint }) => {
-
     return (
         <Box
             ref={refProp}
