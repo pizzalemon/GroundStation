@@ -324,7 +324,7 @@ const FlightPlanToolbar = props => {
                     <Button disabled={!(lat && lon)}   onClick={()=>addWaypoint(lat,lon,alt)}>Plot</Button>
                     
                 </Row>
-                <div style={{ overflow: 'auto', height: '175px', backgroundColor:dark }}>
+                <div style={{ overflow: 'auto', height: '200px', backgroundColor: dark }}>
                     <table>
                         <thead>
                             <tr>
@@ -335,15 +335,28 @@ const FlightPlanToolbar = props => {
                                 
                             </tr>
                         </thead>
-                        <tbody >
-                            {props.getters.path.map((point, index) => (
-                                <tr key={index}>
-                                    <td style={{padding:"8px"}}>{point.lat.toFixed(3)}</td>
-                                    <td style={{padding:"8px"}}>{point.lng.toFixed(3)}</td>
-                                    <td style={{padding:"8px"}}>{point.alt}</td>
-                                    <td style={{padding:"8px"}}>{numToCommands[point.cmd]}</td>
-                                </tr>
-                            ))}
+                        <tbody>
+                            {props.getters.path.map((point, index) => {
+                                if (point.cmd == Commands.jump) {
+                                    return (
+                                        <tr key={index}>
+                                            <td style={{ padding: "2px 8px" }}>{point.num-1}</td>
+                                            <td style={{ padding: "2px 8px" }}>{point.p1}</td>
+                                            <td style={{ padding: "2px 8px" }}>{point.alt}</td>
+                                            <td style={{ padding: "2px 8px" }}>{numToCommands[point.cmd]}</td>
+                                        </tr>
+                                    )
+                                } else {
+                                    return (
+                                        <tr key={index}>
+                                            <td style={{ padding: "2px 8px" }}>{point.lat}</td>
+                                            <td style={{ padding: "2px 8px" }}>{point.lng}</td>
+                                            <td style={{ padding: "2px 8px" }}>{point.alt}</td>
+                                            <td style={{ padding: "2px 8px" }}>{numToCommands[point.cmd]}</td>
+                                        </tr>
+                                    )
+                                }
+                            })}
                         </tbody>
                     </table>
                 </div>

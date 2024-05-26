@@ -11,9 +11,6 @@ import RotatedMarker from "./RotatedMarker.js"
 import { useInterval } from "../util"
 import { Box, Button } from "components/UIElements"
 import { red } from "theme/Colors"
-import { first, get } from "lodash"
-import { promiseImpl } from "ejs"
-import { hasSelectionSupport } from "@testing-library/user-event/dist/utils/index.js"
 
 // v is onChange value, value is validated value (i.e. your data because to have been set it must have been validated), set is setter
 const signedFloatValidation = (v, value, set) => {
@@ -311,7 +308,6 @@ const FlightPlanMap = props => {
 				}}
 				onkeydown={event => handleKeyPress(event, key)}
 				draggable={draggable}
-				datatype={datatype}
 				opacity={latlng.opacity}
 			>
 				<Tooltip>
